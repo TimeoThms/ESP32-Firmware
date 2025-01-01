@@ -11,10 +11,14 @@
 #endif
 
 // Buttons settings
-#define BTN_1_PIN 4
-#define BTN_2_PIN 5
+#define BTN_1_PIN 5
+#define BTN_2_PIN 4
 #define BTN_3_PIN 6
 #define BTN_DEBOUNCE_DELAY 200
 #define BTN_LONG_PRESS_DURATION 1000
+
+// MODULES
+// DHT22
+#define DHT_PIN 38
 
 #endif  // CONFIG_H

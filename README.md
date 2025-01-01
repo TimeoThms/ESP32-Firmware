@@ -16,7 +16,7 @@ This is a firmware project for the ESP32 microcontroller. This firmware is desig
 
 ## Installation
 
-# X. Configure WiFi Credentials
+### X. Configure WiFi Credentials
 Create a `credentials.h` in `src/configs` and fill it like this:
 ```h
 // WiFi Credentials

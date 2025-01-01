@@ -1,6 +1,6 @@
 #include "buttons.h"
 
-Button buttons[] = {
+Button buttons[3] = {
     {1, BTN_1_PIN, 0, 0, false},  // Pins defined in config.h
     {2, BTN_2_PIN, 0, 0, false},
     {3, BTN_3_PIN, 0, 0, false}};
