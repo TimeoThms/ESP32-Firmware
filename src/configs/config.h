@@ -10,6 +10,9 @@
 #error "Please define WIFI credentials in credentials.h file. Check README.md for more informations."
 #endif
 
+// Bluetooth
+#define DEVICE_NAME "ESP32"
+
 // Buttons settings
 #define BTN_1_PIN 5
 #define BTN_2_PIN 4
@@ -21,8 +24,17 @@
 #define I2C_SCL 2
 #define I2C_SDA 1
 
+// I2S Config
+#define I2S_SCK_PIN 15
+#define I2S_WS_PIN 16
+#define I2S_MIC_SD_PIN 47
+#define I2S_SPK_DIN_PIN 48
+
 // DHT22
 #define DHT_PIN 38
+
+// WS2812B
+#define LEDS_PIN 18
 
 // --- Timezone Configuration ---
 // TIMEZONE: character string abbreviation for the time zone; it must be no longer than five character

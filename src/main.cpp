@@ -1,13 +1,25 @@
 #include <Arduino.h>
-#include <BH1750.h>
+#include <FastLed.h>
 #include <Wire.h>
+
+#include <vector>
 
 #include "configs/config.h"
 #include "modules/bh1750/bh1750.h"
 #include "modules/buttons/buttons.h"
 #include "modules/dht22/dht22.h"
 #include "modules/ds3231/ds3231.h"
+#include "modules/ws2812b/ws2812b.h"
+#include "utils/bluetooth/bluetooth.h"
+#include "utils/i2s/i2s.h"
+#include "utils/screen/screen.h"
 #include "utils/wifi/wifi.h"
+
+std::vector<std::vector<CRGB>> exampleBitmap = {
+    {CRGB::Red, CRGB::Green, CRGB::Blue},
+    {CRGB::Yellow, CRGB::Magenta, CRGB::Cyan},
+    {CRGB::White, CRGB::Black, CRGB::Gray},
+    {CRGB::Pink, CRGB::Aqua, CRGB::Orange}};
 
 void setup() {
     Serial.begin(115200);
@@ -17,10 +29,15 @@ void setup() {
     initWiFi();
 
     Wire.begin(I2C_SDA, I2C_SCL);
+    initI2S();
+
 
     initDS3231();
     initDHT22();
     initBH1750();
+    initWS2812B();
+
+    setBrightness(5);
 }
 
 void loop() {
@@ -38,10 +55,19 @@ void loop() {
                 Serial.printf("Current Time: %02d/%02d/%04d %02d:%02d:%02d\n",
                               getTimeFromDS3231().day(), getTimeFromDS3231().month(), getTimeFromDS3231().year(),
                               getTimeFromDS3231().hour(), getTimeFromDS3231().minute(), getTimeFromDS3231().second());
+            } else if (btn.id == 2) {
+                screen.placePixel(3, 5, CRGB::Red);
+                screen.place(11, 1, exampleBitmap);
+                screen.updateScreen();
             }
 
         } else if (clickType == LONG_CLICK) {
             Serial.printf("Long click on %d\n", btn.id);
         }
+    }
+
+    if (checkSound()) {
+        digitalWrite(21, !digitalRead(21));
+        Serial.println("Sound detected");
     }
 }
