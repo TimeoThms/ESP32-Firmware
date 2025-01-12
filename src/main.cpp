@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "configs/config.h"
+#include "graphics/screen/screen.h"
+#include "graphics/utils/graphics_utils.h"
 #include "modules/bh1750/bh1750.h"
 #include "modules/buttons/buttons.h"
 #include "modules/dht22/dht22.h"
@@ -12,7 +14,6 @@
 #include "modules/ws2812b/ws2812b.h"
 #include "utils/bluetooth/bluetooth.h"
 #include "utils/i2s/i2s.h"
-#include "utils/screen/screen.h"
 #include "utils/wifi/wifi.h"
 
 std::vector<std::vector<CRGB>> exampleBitmap = {
@@ -20,6 +21,10 @@ std::vector<std::vector<CRGB>> exampleBitmap = {
     {CRGB::Yellow, CRGB::Magenta, CRGB::Cyan},
     {CRGB::White, CRGB::Black, CRGB::Gray},
     {CRGB::Pink, CRGB::Aqua, CRGB::Orange}};
+
+std::vector<std::vector<CRGB>> exampleBitmap2 = {
+    {CRGB::Green, CRGB::GreenYellow, CRGB::Purple},
+    {CRGB::Olive, CRGB::Magenta, CRGB::Aqua}};
 
 void setup() {
     Serial.begin(115200);
@@ -30,7 +35,6 @@ void setup() {
 
     Wire.begin(I2C_SDA, I2C_SCL);
     initI2S();
-
 
     initDS3231();
     initDHT22();
@@ -56,8 +60,9 @@ void loop() {
                               getTimeFromDS3231().day(), getTimeFromDS3231().month(), getTimeFromDS3231().year(),
                               getTimeFromDS3231().hour(), getTimeFromDS3231().minute(), getTimeFromDS3231().second());
             } else if (btn.id == 2) {
-                screen.placePixel(3, 5, CRGB::Red);
-                screen.place(11, 1, exampleBitmap);
+                std::vector<std::vector<CRGB>> finalBitmap = joinColoredBitmaps(exampleBitmap, exampleBitmap2, exampleBitmap[0].size()+1, 2);
+                screen.place(1, 0, finalBitmap);
+                screen.place(10, 1, textToBitmap("HELLO", CRGB::Green));
                 screen.updateScreen();
             }
 

@@ -15,7 +15,7 @@ class Screen {
 
     void placePixel(int x, int y, CRGB color);
 
-    void place(int x, int y, std::vector<std::vector<CRGB>>& bitmap);
+    void place(int x, int y, const std::vector<std::vector<CRGB>>& bitmap);
 
     void updateScreen();
 };

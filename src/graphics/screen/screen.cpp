@@ -15,11 +15,11 @@ void Screen::placePixel(int x, int y, CRGB color) {
     pixels[x][y] = color;
 }
 
-void Screen::place(int x, int y, std::vector<std::vector<CRGB>>& bitmap) {
-    for (int i = 0; i < bitmap.size(); i++) {
-        for (int j = 0; j < bitmap[0].size(); j++) {
+void Screen::place(int x, int y, const std::vector<std::vector<CRGB>>& colorBitmap) {
+    for (int i = 0; i < colorBitmap.size(); i++) {
+        for (int j = 0; j < colorBitmap[0].size(); j++) {
             if (x + j < 32 && y + i < 8) {
-                pixels[x + j][y + i] = bitmap[i][j]; 
+                pixels[x + j][y + i] = colorBitmap[i][j];
             }
         }
     }
