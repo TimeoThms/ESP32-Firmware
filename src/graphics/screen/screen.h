@@ -20,6 +20,6 @@ class Screen {
     void updateScreen();
 };
 
-extern Screen screen;
+// extern Screen screen;
 
 #endif  // SCREEN_H

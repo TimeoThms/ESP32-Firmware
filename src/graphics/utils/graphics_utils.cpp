@@ -53,15 +53,43 @@ std::vector<std::vector<CRGB>> colorBitmap(std::vector<std::vector<bool>> bitmap
     return result;
 }
 
+bool isMultibyteChar(unsigned char byte) {
+    return byte >= 0x80;
+}
+
 std::vector<std::vector<CRGB>> textToBitmap(const std::string text, CRGB color) {
     std::vector<std::vector<CRGB>> textColorBitmap;
-    for (size_t i = 0; i < text.size(); ++i) {
-        char currentChar = text[i];
+    size_t i = 0;
+    while (i < text.size()) {
+        std::string currentCharStr;
+
+        // Vérifier si le caractère est un caractère multioctet
+        if (isMultibyteChar(text[i])) {
+            // Si c'est un caractère UTF-8 multioctet, prendre les 2 octets
+            currentCharStr.push_back(text[i]);
+            currentCharStr.push_back(text[i + 1]);
+            i += 2;  // Passer les 2 octets
+        } else {
+            // Si c'est un caractère simple, prendre un seul octet
+            currentCharStr.push_back(text[i]);
+            i += 1;
+        }
+
+        // Afficher le caractère actuel et son code hexadécimal
+        Serial.print("Caractère actuel: ");
+        Serial.print(currentCharStr.c_str());
+        Serial.print(" (Code Unicode: ");
+        for (char ch : currentCharStr) {
+            Serial.print((int)(unsigned char)ch, HEX);
+            Serial.print(" ");
+        }
+        Serial.println(")");
+
         std::vector<std::vector<CRGB>> charColorBitmap;
 
         // Get char bitmap
-        if (font.find(currentChar) != font.end()) {
-            const std::vector<int>& charPixels = font.at(currentChar);
+        if (font.find(currentCharStr) != font.end()) {
+            const std::vector<int>& charPixels = font.at(currentCharStr);
 
             std::vector<std::vector<bool>> charBitmap;
             int width = charPixels.size() / 5;
@@ -74,11 +102,14 @@ std::vector<std::vector<CRGB>> textToBitmap(const std::string text, CRGB color) 
                 charBitmap.push_back(pixelRow);
             }
             charColorBitmap = colorBitmap(charBitmap, color);
-        }
-        if (textColorBitmap.empty()) {
-            textColorBitmap = charColorBitmap;
+
+            if (textColorBitmap.empty()) {
+                textColorBitmap = charColorBitmap;
+            } else {
+                textColorBitmap = joinColoredBitmaps(textColorBitmap, charColorBitmap, textColorBitmap[0].size() + 1, 0);
+            }
         } else {
-            textColorBitmap = joinColoredBitmaps(textColorBitmap, charColorBitmap, textColorBitmap[0].size() + 1, 0);
+            Serial.printf("Char not found in font:%s\n", currentCharStr.c_str());
         }
     }
     return textColorBitmap;

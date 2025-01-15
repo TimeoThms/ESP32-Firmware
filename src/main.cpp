@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "apps/app.h"
+#include "apps/temperature/temperature.h"
 #include "configs/config.h"
 #include "graphics/screen/screen.h"
 #include "graphics/utils/graphics_utils.h"
@@ -12,7 +14,6 @@
 #include "modules/dht22/dht22.h"
 #include "modules/ds3231/ds3231.h"
 #include "modules/ws2812b/ws2812b.h"
-#include "utils/bluetooth/bluetooth.h"
 #include "utils/i2s/i2s.h"
 #include "utils/wifi/wifi.h"
 
@@ -25,6 +26,12 @@ std::vector<std::vector<CRGB>> exampleBitmap = {
 std::vector<std::vector<CRGB>> exampleBitmap2 = {
     {CRGB::Green, CRGB::GreenYellow, CRGB::Purple},
     {CRGB::Olive, CRGB::Magenta, CRGB::Aqua}};
+
+std::vector<App*> apps;
+App* activeApp;
+
+unsigned long previousMillis = 0;
+int framerate = 10;
 
 void setup() {
     Serial.begin(115200);
@@ -42,11 +49,18 @@ void setup() {
     initWS2812B();
 
     setBrightness(5);
+
+    // Apps
+    activeApp = new TemperatureApp();
+    activeApp->setup();
+    apps.push_back(activeApp);
 }
 
 void loop() {
+    unsigned long currentMillis = millis();
+
     // Buttons
-    for (Button &btn : buttons) {
+    for (Button& btn : buttons) {
         ClickType clickType = checkButton(btn);
         if (clickType == SHORT_CLICK) {
             Serial.printf("Short click on %d\n", btn.id);
@@ -59,20 +73,30 @@ void loop() {
                 Serial.printf("Current Time: %02d/%02d/%04d %02d:%02d:%02d\n",
                               getTimeFromDS3231().day(), getTimeFromDS3231().month(), getTimeFromDS3231().year(),
                               getTimeFromDS3231().hour(), getTimeFromDS3231().minute(), getTimeFromDS3231().second());
-            } else if (btn.id == 2) {
-                std::vector<std::vector<CRGB>> finalBitmap = joinColoredBitmaps(exampleBitmap, exampleBitmap2, exampleBitmap[0].size()+1, 2);
-                screen.place(1, 0, finalBitmap);
-                screen.place(10, 1, textToBitmap("HELLO", CRGB::Green));
-                screen.updateScreen();
-            }
+                // } else if (btn.id == 2) {
+                //     std::vector<std::vector<CRGB>> finalBitmap = joinColoredBitmaps(exampleBitmap, exampleBitmap2, exampleBitmap[0].size() + 1, 2);
+                //     screen.place(1, 0, finalBitmap);
+                //     screen.place(10, 1, textToBitmap("HELLO", CRGB::Green));
+                //     screen.updateScreen();
+                // }
 
-        } else if (clickType == LONG_CLICK) {
-            Serial.printf("Long click on %d\n", btn.id);
+            } else if (clickType == LONG_CLICK) {
+                Serial.printf("Long click on %d\n", btn.id);
+            }
         }
     }
 
     if (checkSound()) {
         digitalWrite(21, !digitalRead(21));
         Serial.println("Sound detected");
+    }
+    if (currentMillis - previousMillis >= framerate * 10) {
+        previousMillis = currentMillis;
+
+        // Serial.println("Tick");
+        if (activeApp) {
+            activeApp->tick();
+            activeApp->getScreen().updateScreen();
+        }
     }
 }
