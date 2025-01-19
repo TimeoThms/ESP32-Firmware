@@ -5,17 +5,18 @@ unsigned long lastMeasureTime;
 float lastHumidity;
 float lastTemperature;
 
-void initDHT22() {
-    dht.begin();
-}
-
 static void updateMeasurements() {
     unsigned long now = millis();
-    if (now - lastMeasureTime >= 2000) {
+    if (now - lastMeasureTime >= 10000) {  // One measurement every 10 seconds
         lastHumidity = dht.readHumidity();
         lastTemperature = dht.readTemperature();
         lastMeasureTime = now;
     }
+}
+
+void initDHT22() {
+    dht.begin();
+    updateMeasurements();
 }
 
 float readHumidity() {

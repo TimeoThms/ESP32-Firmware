@@ -7,15 +7,19 @@ class TemperatureApp : public App {
    public:
     TemperatureApp() {
         name = "Temperature";
-        description = "Displays the current temperature and humidity.";
+        description = "Displays the current temperature.";
         icon = {
-            {CRGB::Red, CRGB::Green, CRGB::Blue},
-            {CRGB::Yellow, CRGB::Magenta, CRGB::Cyan},
-            {CRGB::White, CRGB::Black, CRGB::Gray},
-            {CRGB::Pink, CRGB::Aqua, CRGB::Orange}};
+            {CRGB::Black, CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(230, 230, 230), CRGB(230, 230, 230), CRGB::Black, CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(70, 70, 70), CRGB(230, 230, 230), CRGB::Black, CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(70, 70, 70), CRGB(230, 230, 230), CRGB::Black, CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(201, 38, 46), CRGB(230, 230, 230), CRGB::Black, CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(201, 38, 46), CRGB(201, 38, 46), CRGB(201, 38, 46), CRGB(230, 230, 230), CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(201, 38, 46), CRGB(201, 38, 46), CRGB(201, 38, 46), CRGB(230, 230, 230), CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(201, 38, 46), CRGB(201, 38, 46), CRGB(201, 38, 46), CRGB(230, 230, 230), CRGB::Black, CRGB::Black},
+            {CRGB::Black, CRGB::Black, CRGB::Black, CRGB(230, 230, 230), CRGB(230, 230, 230), CRGB(230, 230, 230), CRGB::Black, CRGB::Black, CRGB::Black}};
     }
 
-    void tick() override ;
+    void tick() override;
 
     void handleButtonPressed(int button, ClickType clickType) override;
 };

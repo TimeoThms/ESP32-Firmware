@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "apps/app.h"
+#include "apps/humidity/humidity.h"
+#include "apps/time/time.h"
 #include "apps/temperature/temperature.h"
 #include "configs/config.h"
 #include "graphics/screen/screen.h"
@@ -28,7 +30,7 @@ std::vector<std::vector<CRGB>> exampleBitmap2 = {
     {CRGB::Olive, CRGB::Magenta, CRGB::Aqua}};
 
 std::vector<App*> apps;
-App* activeApp;
+size_t activeIndex;
 
 unsigned long previousMillis = 0;
 int framerate = 10;
@@ -51,9 +53,12 @@ void setup() {
     setBrightness(5);
 
     // Apps
-    activeApp = new TemperatureApp();
-    activeApp->setup();
-    apps.push_back(activeApp);
+    apps.push_back(new TimeApp());
+    apps.push_back(new TemperatureApp());
+    apps.push_back(new HumidityApp());
+
+    activeIndex = 0;
+    apps[activeIndex]->setup();
 }
 
 void loop() {
@@ -82,21 +87,24 @@ void loop() {
 
             } else if (clickType == LONG_CLICK) {
                 Serial.printf("Long click on %d\n", btn.id);
+            } else if (btn.id == 3) {
+                activeIndex = (activeIndex + 1) % apps.size();
+                apps[activeIndex]->setup();
             }
         }
-    }
 
-    if (checkSound()) {
-        digitalWrite(21, !digitalRead(21));
-        Serial.println("Sound detected");
-    }
-    if (currentMillis - previousMillis >= framerate * 10) {
-        previousMillis = currentMillis;
+        if (checkSound()) {
+            digitalWrite(21, !digitalRead(21));
+            Serial.println("Sound detected");
+        }
+        if (currentMillis - previousMillis >= framerate * 10) {
+            previousMillis = currentMillis;
 
-        // Serial.println("Tick");
-        if (activeApp) {
-            activeApp->tick();
-            activeApp->getScreen().updateScreen();
+            // Serial.println("Tick");
+            if (apps[activeIndex]) {
+                apps[activeIndex]->tick();
+                apps[activeIndex]->getScreen().updateScreen();
+            }
         }
     }
 }
